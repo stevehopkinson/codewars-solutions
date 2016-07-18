@@ -18,3 +18,39 @@ If the amount can not be divided among the levels such that the remainder is 0 t
 
 Hint: Always make sure that the amount cannot be divided among the levels in some way before you return null */
 
+/* function buildGraph (amount, coins) {
+  var start = 0;
+  var graph = {};
+  var queue = [start];
+  
+  while (queue.length > 0) {
+    var current = queue.shift();
+    console.log(current);
+    graph[current] = {};
+    for (var coin of coins) {
+      var next = current + coin;
+      graph[current][next] = coin;
+      if (next <= amount)
+        queue.push(next);
+    }
+  }
+  return graph;
+} */
+
+function buildGraph (amount, coins) {
+  var start = 0;
+  var graph = {};
+  var queue = [start];
+  
+  while (queue.length > 0) {
+    var current = queue.shift();
+    graph[current] = [];
+    for (var coin of coins) {
+      var next = current + coin;
+      graph[current].push(coin);
+      if (next <= amount)
+        queue.push(next);
+    }
+  }
+  return graph;
+}
