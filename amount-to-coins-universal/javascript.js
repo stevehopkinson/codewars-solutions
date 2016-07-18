@@ -18,25 +18,6 @@ If the amount can not be divided among the levels such that the remainder is 0 t
 
 Hint: Always make sure that the amount cannot be divided among the levels in some way before you return null */
 
-/* function buildGraph (amount, coins) {
-  var start = 0;
-  var graph = {};
-  var queue = [start];
-  
-  while (queue.length > 0) {
-    var current = queue.shift();
-    console.log(current);
-    graph[current] = {};
-    for (var coin of coins) {
-      var next = current + coin;
-      graph[current][next] = coin;
-      if (next <= amount)
-        queue.push(next);
-    }
-  }
-  return graph;
-} */
-
 function buildGraph (amount, coins) {
   var start = 0;
   var graph = {};
@@ -47,10 +28,56 @@ function buildGraph (amount, coins) {
     graph[current] = [];
     for (var coin of coins) {
       var next = current + coin;
-      graph[current].push(coin);
-      if (next <= amount)
+      graph[current].push(next);
+      if (next <= amount && queue.indexOf(next) == -1)
         queue.push(next);
     }
   }
   return graph;
+}
+
+function traverseGraph (graph, goal) {
+	var frontier = [];
+	frontier.push(0);
+	cameFrom = {};
+	cameFrom[0] = null;
+	
+	while (frontier.length > 0) {
+		var current = frontier.shift();
+		if (current == goal)
+			break;
+		if (current in graph) {
+			for (var next of graph[current]) {
+				if (!(next in cameFrom)) {
+					frontier.push(next);
+					cameFrom[next] = current;
+				}
+			}
+		}
+	}
+	return cameFrom;
+}
+
+function buildPath (cameFrom, goal, coins) {
+	if (!(goal in cameFrom))
+		return null;
+	var change = {};
+	for (var coin of coins) {
+		change[coin] = 0;
+	}
+	var current = goal;
+	while (current != '0') {
+		var previous = cameFrom[current];
+		coin = parseInt(current) - parseInt(previous);
+		change[coin] += 1;
+		current = previous;
+	}
+	return change;
+}
+
+function amountToCoins(amount, coins) {
+  var graph = buildGraph(amount, coins);
+  var traversedGraph = traverseGraph(graph, amount);
+  var change = buildPath(traversedGraph, amount, coins);
+  return change;
 }
